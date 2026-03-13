@@ -1,0 +1,375 @@
+# Cursor Prompt: Indian Rocks Beach Vacation Rental Website
+
+## Project Overview
+
+Build a professional, modern vacation rental booking website for two side-by-side beachfront condos in Indian Rocks Beach, Florida. The site should feel like a boutique hospitality brand — warm, coastal, and premium — not a generic Airbnb clone. The tech stack is **Next.js 14 (App Router) + TypeScript + Tailwind CSS + Firebase (Auth, Firestore, Storage)**. Deploy-ready for Vercel.
+
+---
+
+## Tech Stack & Setup
+
+- **Framework**: Next.js 14 with App Router, TypeScript
+- **Styling**: Tailwind CSS with a custom theme (see Design Direction below)
+- **Backend/Database**: Firebase Firestore for data, Firebase Storage for images, Firebase Auth for owner login
+- **State Management**: React Context or Zustand for global state (cart/booking flow)
+- **Date Handling**: date-fns
+- **Calendar**: react-day-picker or build a custom calendar component
+- **Payments**: Stripe Checkout (server-side session creation via Next.js API routes)
+- **Email**: Resend or SendGrid for booking confirmation emails (via API routes)
+- **Deployment**: Vercel
+
+Initialize with:
+```bash
+npx create-next-app@latest irb-rentals --typescript --tailwind --app --src-dir
+cd irb-rentals
+npm install firebase react-day-picker date-fns zustand stripe @stripe/stripe-js
+```
+
+Set up a Firebase project and add config to `.env.local`:
+```
+NEXT_PUBLIC_FIREBASE_API_KEY=
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
+NEXT_PUBLIC_FIREBASE_APP_ID=
+STRIPE_SECRET_KEY=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+RESEND_API_KEY=
+```
+
+---
+
+## Design Direction
+
+### Aesthetic: "Coastal Boutique Hotel"
+Think Restoration Hardware meets a modern beach house. Not pastel and kitschy — sophisticated, airy, and textured.
+
+### Typography
+- **Display/Headings**: Use a serif with character — `DM Serif Display` or `Playfair Display` from Google Fonts. Warm and editorial.
+- **Body**: `Source Sans 3` or `Lato` — clean, readable, slightly warm.
+- **Accent**: A hand-drawn or script font sparingly for callouts like "Book Your Escape" — `Caveat` or `Sacramento`.
+
+### Color Palette (define as CSS variables and Tailwind theme extensions)
+```
+--color-sand:        #F5F0E8     (primary background — warm off-white)
+--color-driftwood:   #A89279     (warm neutral — nav, borders, muted text)
+--color-deep-ocean:  #1B3A4B     (primary text, headings, dark sections)
+--color-sea-glass:   #6B9F9E     (accent — CTAs, links, highlights)
+--color-coral:       #E07A5F     (secondary accent — urgency, pricing)
+--color-white:       #FFFFFF     (cards, overlays)
+--color-shell:       #EDE5D8     (alternate background sections)
+```
+
+### Visual Treatment
+- **Photography-first**: Hero sections with full-bleed beach/condo photography. Use subtle parallax or Ken Burns zoom on hero images.
+- **Texture**: Add a subtle paper/linen noise texture overlay on the sand background (CSS `background-image` with a tiny repeating noise PNG or SVG filter).
+- **Borders & Dividers**: Thin, warm lines. Consider a subtle wave SVG divider between sections.
+- **Cards**: Slight warm shadow (`box-shadow` with warm tones, not gray), rounded corners (8–12px).
+- **Hover States**: Smooth 300ms transitions. Images scale slightly (1.03). Buttons shift color with a subtle lift shadow.
+- **Motion**: Staggered fade-up on scroll for content sections using Intersection Observer. Keep it elegant — no bouncing or spinning.
+
+---
+
+## Site Architecture & Pages
+
+### Public Pages
+
+#### 1. Homepage (`/`)
+- **Hero Section**: Full-viewport image carousel or video background of the beach/condos with overlay text: property brand name, tagline ("Your Gulf Coast Escape"), and a prominent "Check Availability" CTA button.
+- **Introduction Section**: Brief welcome copy about the location and the two properties. Include a small embedded Google Map or static map image showing Indian Rocks Beach.
+- **Property Cards Section**: Two large, clickable cards — one per property. Each shows the hero image, property name, quick specs (bedrooms, bathrooms, sleeps X, sqft), a starting nightly rate, and a "View Property →" link.
+- **Why Stay With Us Section**: Grid of 3–4 icons/features (beachfront location, fully equipped kitchen, no service fees, local owner/host).
+- **Testimonials Section**: 2–3 guest reviews in a horizontal carousel or staggered layout.
+- **Footer**: Contact info, links, social icons, copyright.
+
+#### 2. Property Detail Page (`/properties/[slug]`)
+Each property gets its own page. Slug could be `condo-a` and `condo-b` (or actual names).
+
+- **Photo Gallery**: Top section — a grid gallery (1 large + 4 small thumbnails) that opens into a full-screen lightbox slideshow on click. All images served from Firebase Storage.
+- **Property Title & Quick Info Bar**: Name, star rating (if applicable), location badge, max guests, beds, baths.
+- **Booking Widget (sticky sidebar on desktop, sticky bottom bar on mobile)**:
+  - Date range picker (check-in / check-out) — calendar UI.
+  - Guest count selector.
+  - Live pricing calculation (nightly rate × nights + cleaning fee + taxes). Pull rates from Firestore (support seasonal/variable pricing).
+  - Blocked/booked dates shown as disabled on the calendar (fetched from Firestore).
+  - "Book Now" button → proceeds to checkout.
+- **Description Section**: Full property description with amenities list (icons + labels, grid layout).
+- **Amenities Grid**: Categorized — Kitchen, Bedroom, Bathroom, Outdoor, Entertainment, Building.
+- **Location Section**: Embedded Google Map, nearby attractions list, distance to beach.
+- **House Rules Section**: Check-in/out times, pet policy, noise policy, etc.
+- **Reviews Section**: Guest reviews pulled from Firestore.
+- **Cancellation Policy Section**.
+
+#### 3. Booking/Checkout Page (`/book/[propertySlug]`)
+- **Booking Summary**: Property name, dates, guests, nightly breakdown, fees, total.
+- **Guest Information Form**: Name, email, phone, special requests.
+- **Payment**: Redirect to Stripe Checkout or embed Stripe Elements. Create the Stripe session server-side in a Next.js API route (`/api/create-checkout-session`).
+- **Confirmation Page** (`/book/confirmation`): Thank you message, booking reference number, summary, "what's next" info. Trigger a confirmation email via API route.
+
+#### 4. About / Contact Page (`/about`)
+- About the owners/hosts, the story behind the properties.
+- Contact form (sends email via API route).
+- Direct email and phone listed.
+
+#### 5. FAQ Page (`/faq`)
+- Accordion-style FAQ covering booking, cancellation, check-in, amenities, local tips.
+
+---
+
+### Owner Admin Dashboard (`/admin/*`)
+
+**Protected by Firebase Auth.** Only the owner can log in. No public registration — create the owner account manually in Firebase Console.
+
+#### Admin Layout
+- Sidebar navigation: Dashboard, Bookings, Properties, Calendar, Reviews, Settings.
+- Top bar with owner name and logout button.
+- Responsive — collapses to a hamburger menu on mobile.
+
+#### Admin Pages
+
+**Dashboard (`/admin`)**
+- Summary cards: Upcoming check-ins (next 7 days), active stays, total revenue this month, occupancy rate this month.
+- Recent bookings list (last 10).
+- Quick links to manage each property.
+
+**Bookings (`/admin/bookings`)**
+- Filterable/searchable table of all bookings: guest name, property, dates, status (confirmed, pending, cancelled, completed), total paid, created date.
+- Tabs or filter chips: Upcoming, Current, Past, Cancelled.
+- Click a booking → detail view with full guest info, payment status, ability to add notes, cancel booking (with refund option via Stripe API), or manually mark as completed.
+- **Manual Booking Button**: Owner can create a booking manually (for phone/email bookings or personal use blocks) — form with property, dates, guest name (optional), notes. These show on the calendar as blocked dates.
+
+**Properties (`/admin/properties/[slug]`)**
+- Edit property details: name, description, amenities (checkbox grid), house rules, location info.
+- **Photo Manager**: 
+  - Drag-and-drop reorder of photos.
+  - Upload new photos (to Firebase Storage, store URL in Firestore).
+  - Delete photos.
+  - Set hero/cover photo.
+  - Show thumbnail previews.
+- **Pricing Manager**:
+  - Base nightly rate.
+  - Seasonal rate overrides: define date ranges with custom rates (e.g., "Summer Peak: June 1–Aug 31 = $250/night").
+  - Cleaning fee.
+  - Tax percentage.
+  - Minimum night stay.
+  - Weekend rate adjustment (optional).
+
+**Calendar (`/admin/calendar`)**
+- Full monthly calendar view showing both properties side by side (or toggle between them).
+- Color-coded: booked (confirmed guest), blocked (owner block), available.
+- Click a date range to manually block/unblock dates.
+- Click an existing booking to view details.
+- Support for iCal export/import if you want to sync with Airbnb/VRBO later.
+
+**Reviews (`/admin/reviews`)**
+- View all reviews. Approve/hide reviews. Add owner responses.
+- Option to manually add reviews (for reviews from other platforms).
+
+**Settings (`/admin/settings`)**
+- Update owner email/password.
+- Site settings: brand name, tagline, contact email, phone number.
+- Notification preferences: email on new booking, email on cancellation.
+
+---
+
+## Firebase Data Model (Firestore Collections)
+
+```
+/properties/{propertyId}
+  - name: string
+  - slug: string
+  - description: string
+  - shortDescription: string
+  - heroImage: string (Storage URL)
+  - photos: array of { url: string, order: number, caption?: string }
+  - amenities: array of { name: string, category: string, icon: string }
+  - location: { address: string, lat: number, lng: number, nearbyAttractions: array }
+  - houseRules: array of string
+  - specs: { bedrooms: number, bathrooms: number, maxGuests: number, sqft: number }
+  - pricing: {
+      baseRate: number,
+      cleaningFee: number,
+      taxRate: number,
+      minNights: number,
+      seasonalRates: array of { name: string, startDate: timestamp, endDate: timestamp, rate: number }
+    }
+  - cancellationPolicy: string
+  - active: boolean
+  - createdAt: timestamp
+  - updatedAt: timestamp
+
+/bookings/{bookingId}
+  - propertyId: string (ref to property)
+  - guestName: string
+  - guestEmail: string
+  - guestPhone: string
+  - checkIn: timestamp
+  - checkOut: timestamp
+  - numGuests: number
+  - nightlyRate: number (rate at time of booking)
+  - numNights: number
+  - cleaningFee: number
+  - taxes: number
+  - totalPrice: number
+  - status: "confirmed" | "pending" | "cancelled" | "completed"
+  - stripeSessionId?: string
+  - stripePaymentIntentId?: string
+  - specialRequests?: string
+  - ownerNotes?: string
+  - isManualBlock: boolean (true if owner-created block)
+  - createdAt: timestamp
+  - updatedAt: timestamp
+
+/reviews/{reviewId}
+  - propertyId: string
+  - bookingId?: string
+  - guestName: string
+  - rating: number (1-5)
+  - text: string
+  - ownerResponse?: string
+  - approved: boolean
+  - source: "direct" | "manual" (manual = imported from other platform)
+  - createdAt: timestamp
+
+/siteSettings/{settingsId}
+  - brandName: string
+  - tagline: string
+  - contactEmail: string
+  - contactPhone: string
+  - aboutText: string
+  - socialLinks: { instagram?: string, facebook?: string }
+  - updatedAt: timestamp
+```
+
+---
+
+## API Routes (Next.js `/app/api/`)
+
+- `POST /api/create-checkout-session` — Creates a Stripe Checkout session with booking details. Stores a pending booking in Firestore.
+- `POST /api/webhooks/stripe` — Stripe webhook listener. On `checkout.session.completed`, update booking status to "confirmed" and send confirmation email.
+- `POST /api/send-email` — Sends booking confirmation or contact form emails via Resend/SendGrid.
+- `GET /api/availability/[propertySlug]` — Returns blocked date ranges for a property (from confirmed bookings and manual blocks). Used by the front-end calendar.
+- `POST /api/bookings/cancel` — Admin-initiated cancellation. Updates Firestore, processes Stripe refund if applicable.
+
+---
+
+## Key Implementation Details
+
+### Availability Calendar Logic
+- Query Firestore for all bookings where `propertyId` matches and `status` is "confirmed" or `isManualBlock` is true.
+- Build an array of blocked date ranges.
+- On the front-end calendar component, disable these dates.
+- When a user selects dates, validate server-side that the dates are still available before creating the Stripe session (prevent double-booking race conditions).
+
+### Pricing Calculation
+- For selected date range, check each night against seasonal rate overrides.
+- If a night falls within a seasonal range, use that rate; otherwise use the base rate.
+- Sum nightly rates + cleaning fee + (subtotal × tax rate) = total.
+- Show this breakdown clearly in the booking widget and checkout page.
+
+### Image Handling
+- Upload to Firebase Storage under `/properties/{propertyId}/photos/`.
+- Store download URLs in Firestore property document.
+- Use Next.js `<Image>` component with Firebase Storage URLs. Configure `next.config.js` to allow Firebase Storage domain in `images.remotePatterns`.
+- In admin photo manager, use drag-and-drop (react-beautiful-dnd or dnd-kit) for reordering.
+
+### Auth & Route Protection
+- Use Firebase Auth with email/password for the owner.
+- Create a React context (`AuthProvider`) that wraps the app and exposes the current user.
+- All `/admin/*` routes check for authenticated user. If not authenticated, redirect to `/admin/login`.
+- Use Next.js middleware (`middleware.ts`) to protect admin routes server-side as well.
+
+### SEO & Performance
+- Use Next.js metadata API for page titles, descriptions, Open Graph tags.
+- Add structured data (JSON-LD) for `LodgingBusiness` and `VacationRental` schema types.
+- Lazy-load images below the fold.
+- Use `next/font` for Google Fonts loading optimization.
+- Generate a `sitemap.xml` and `robots.txt`.
+
+### Responsive Design
+- Mobile-first approach.
+- Booking widget: sticky sidebar on desktop (lg+), sticky bottom bar on mobile.
+- Photo gallery: full-width stacked on mobile, grid on desktop.
+- Admin dashboard: sidebar collapses to top hamburger on mobile.
+- Test all flows at 375px, 768px, 1024px, 1440px.
+
+---
+
+## File Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx                    (root layout, fonts, AuthProvider)
+│   ├── page.tsx                      (homepage)
+│   ├── about/page.tsx
+│   ├── faq/page.tsx
+│   ├── properties/
+│   │   └── [slug]/page.tsx           (property detail)
+│   ├── book/
+│   │   ├── [propertySlug]/page.tsx   (checkout)
+│   │   └── confirmation/page.tsx
+│   ├── admin/
+│   │   ├── layout.tsx                (admin shell with sidebar)
+│   │   ├── login/page.tsx
+│   │   ├── page.tsx                  (dashboard)
+│   │   ├── bookings/
+│   │   │   ├── page.tsx              (bookings list)
+│   │   │   └── [id]/page.tsx         (booking detail)
+│   │   ├── properties/
+│   │   │   └── [slug]/page.tsx       (property editor)
+│   │   ├── calendar/page.tsx
+│   │   ├── reviews/page.tsx
+│   │   └── settings/page.tsx
+│   └── api/
+│       ├── create-checkout-session/route.ts
+│       ├── webhooks/stripe/route.ts
+│       ├── send-email/route.ts
+│       ├── availability/[propertySlug]/route.ts
+│       └── bookings/cancel/route.ts
+├── components/
+│   ├── ui/                           (reusable primitives: Button, Input, Card, Modal, etc.)
+│   ├── layout/                       (Navbar, Footer, AdminSidebar)
+│   ├── booking/                      (BookingWidget, DateRangePicker, PricingBreakdown)
+│   ├── property/                     (PhotoGallery, Lightbox, AmenityGrid, ReviewCard)
+│   ├── home/                         (Hero, PropertyCards, Testimonials, WhyStayWithUs)
+│   └── admin/                        (BookingTable, PhotoManager, PricingEditor, CalendarView)
+├── lib/
+│   ├── firebase.ts                   (Firebase app init, Firestore/Storage/Auth instances)
+│   ├── firestore.ts                  (CRUD helpers: getProperty, getBookings, createBooking, etc.)
+│   ├── storage.ts                    (Upload/delete image helpers)
+│   ├── stripe.ts                     (Stripe instance init)
+│   ├── pricing.ts                    (calculateTotal, getSeasonalRate helpers)
+│   ├── availability.ts               (getBlockedDates, isDateRangeAvailable helpers)
+│   └── email.ts                      (sendConfirmationEmail, sendContactEmail)
+├── hooks/
+│   ├── useAuth.ts
+│   ├── useProperty.ts
+│   ├── useBookings.ts
+│   └── useAvailability.ts
+├── context/
+│   └── AuthContext.tsx
+├── types/
+│   └── index.ts                      (TypeScript interfaces: Property, Booking, Review, etc.)
+└── styles/
+    └── globals.css                   (Tailwind base, custom CSS variables, noise texture)
+```
+
+---
+
+## Build Order (Suggested Phases)
+
+**Phase 1 — Foundation**: Project setup, Firebase config, Tailwind theme, global layout (Navbar, Footer), homepage with placeholder content. TypeScript types. Firebase helper functions.
+
+**Phase 2 — Properties**: Property detail page with photo gallery, lightbox, amenity grid, description sections. Pull data from Firestore. Responsive layout with sticky booking widget shell.
+
+**Phase 3 — Availability & Booking**: Availability calendar logic, date range picker, pricing calculation, booking widget fully functional. Stripe checkout integration. Booking confirmation page and email.
+
+**Phase 4 — Admin Core**: Auth flow (login page, AuthContext, route protection). Admin layout with sidebar. Dashboard with summary stats. Bookings list and detail views.
+
+**Phase 5 — Admin Property Management**: Photo manager (upload, reorder, delete). Property detail editor. Pricing manager with seasonal rates.
+
+**Phase 6 — Admin Calendar & Extras**: Calendar view with color-coded bookings/blocks. Manual blocking. Reviews management. Site settings page.
+
+**Phase 7 — Polish**: Animations (scroll reveals, page transitions). SEO metadata and structured data. Performance optimization. Mobile QA. Error handling and loading states throughout.
