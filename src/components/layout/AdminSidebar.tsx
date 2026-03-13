@@ -8,7 +8,9 @@ const links = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/bookings", label: "Bookings" },
   { href: "/admin/properties", label: "Properties" },
-  // Future: calendar, reviews, settings
+  { href: "/admin/calendar", label: "Calendar" },
+  { href: "/admin/reviews", label: "Reviews" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 export default function AdminSidebar() {

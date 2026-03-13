@@ -1,4 +1,4 @@
-import { ref, uploadBytes, getDownloadURL, deleteObject, ref as refFromURL } from "firebase/storage";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { storage } from "./firebase";
 
 export async function uploadPropertyPhoto(propertyId: string, file: File): Promise<string> {
@@ -10,7 +10,14 @@ export async function uploadPropertyPhoto(propertyId: string, file: File): Promi
 }
 
 export async function deleteFileByUrl(url: string): Promise<void> {
-  const fileRef = refFromURL(storage, url);
+  // Extract the storage path from a Firebase Storage download URL
+  // URL format: https://firebasestorage.googleapis.com/v0/b/<bucket>/o/<pathEncoded>?...
+  const match = url.match(/\/o\/([^?]+)/);
+  if (!match) return;
+  const encodedPath = match[1];
+  const path = decodeURIComponent(encodedPath);
+  const fileRef = ref(storage, path);
   await deleteObject(fileRef);
 }
+
 

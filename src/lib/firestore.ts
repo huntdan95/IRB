@@ -49,6 +49,69 @@ export async function updateProperty(
   });
 }
 
+export async function createManualBlock(params: {
+  propertyId: string;
+  checkIn: Date;
+  checkOut: Date;
+  notes?: string;
+}): Promise<string> {
+  const { propertyId, checkIn, checkOut, notes } = params;
+  const bookingsRef = collection(db, "bookings");
+  const docRef = await addDoc(bookingsRef, {
+    propertyId,
+    guestName: "Owner block",
+    guestEmail: "",
+    guestPhone: "",
+    checkIn: Timestamp.fromDate(checkIn),
+    checkOut: Timestamp.fromDate(checkOut),
+    numGuests: 0,
+    nightlyRate: 0,
+    numNights: 0,
+    cleaningFee: 0,
+    taxes: 0,
+    totalPrice: 0,
+    status: "confirmed",
+    stripeSessionId: undefined,
+    stripePaymentIntentId: undefined,
+    specialRequests: notes ?? "",
+    ownerNotes: "",
+    isManualBlock: true,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+  });
+  return docRef.id;
+}
+
+export async function getAllReviews(): Promise<Review[]> {
+  const reviewsRef = collection(db, "reviews");
+  const snapshot = await getDocs(reviewsRef);
+  return snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as Review[];
+}
+
+export async function updateReview(
+  id: string,
+  data: Partial<Review>
+): Promise<void> {
+  const ref = doc(db, "reviews", id);
+  await updateDoc(ref, {
+    ...data,
+  });
+}
+
+export async function updateSiteSettings(
+  id: string,
+  data: Partial<SiteSettings>
+): Promise<void> {
+  const ref = doc(db, "siteSettings", id);
+  await updateDoc(ref, {
+    ...data,
+    updatedAt: Timestamp.now(),
+  });
+}
+
 // Bookings
 export async function getBookings(
   propertyId?: string,
