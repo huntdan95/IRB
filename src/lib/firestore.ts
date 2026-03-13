@@ -38,6 +38,17 @@ export async function getAllProperties(): Promise<Property[]> {
   })) as Property[];
 }
 
+export async function updateProperty(
+  id: string,
+  data: Partial<Property>
+): Promise<void> {
+  const ref = doc(db, "properties", id);
+  await updateDoc(ref, {
+    ...data,
+    updatedAt: Timestamp.now(),
+  });
+}
+
 // Bookings
 export async function getBookings(
   propertyId?: string,
