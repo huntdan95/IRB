@@ -61,6 +61,13 @@ export async function getBookings(
   })) as Booking[];
 }
 
+export async function getBookingById(id: string): Promise<Booking | null> {
+  const ref = doc(db, "bookings", id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() } as Booking;
+}
+
 export async function createBooking(booking: Omit<Booking, "id">): Promise<string> {
   const bookingsRef = collection(db, "bookings");
   const docRef = await addDoc(bookingsRef, {
