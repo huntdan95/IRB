@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getProperty, getReviews } from "@/lib/firestore";
+import { getBlockedRangesForProperty } from "@/lib/availability";
 import PhotoGallery from "@/components/property/PhotoGallery";
 import AmenityGrid from "@/components/property/AmenityGrid";
 import ReviewCard from "@/components/property/ReviewCard";
-import BookingWidgetShell from "@/components/property/BookingWidgetShell";
+import BookingWidget from "@/components/booking/BookingWidget";
 
 interface PropertyPageProps {
   params: {
@@ -20,6 +21,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   }
 
   const reviews = await getReviews(property.id);
+  const blockedRanges = await getBlockedRangesForProperty(property.id);
 
   const nightSummary = `${property.specs.bedrooms} bd • ${property.specs.bathrooms} ba • sleeps ${property.specs.maxGuests} • ${property.specs.sqft.toLocaleString()} sqft`;
 
@@ -112,10 +114,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
             </section>
           </div>
 
-          <BookingWidgetShell
-            baseRate={property.pricing.baseRate}
-            propertyName={property.name}
-          />
+          <BookingWidget property={property} blockedRanges={blockedRanges} />
         </div>
       </section>
     </div>
