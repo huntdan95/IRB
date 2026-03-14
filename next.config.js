@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: "export",
   images: {
     remotePatterns: [
       {
@@ -11,13 +12,8 @@ const nextConfig = {
         hostname: "firebasestorage.googleapis.com",
       },
     ],
-  },
-  experimental: {
-    turbo: {
-      root: process.cwd(),
-    },
+    unoptimized: true,
   },
 };
 
 module.exports = nextConfig;
-

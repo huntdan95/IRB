@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
 import type { DateRange } from "react-day-picker";
 import { differenceInCalendarDays, isWithinInterval } from "date-fns";
 import type { Property } from "@/types";
@@ -15,10 +14,8 @@ interface BookingWidgetProps {
 }
 
 export default function BookingWidget({ property, blockedRanges }: BookingWidgetProps) {
-  const router = useRouter();
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [guests, setGuests] = useState(2);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const nights = useMemo(() => {
@@ -37,7 +34,7 @@ export default function BookingWidget({ property, blockedRanges }: BookingWidget
     );
   };
 
-  async function handleBookNow() {
+  function handleBookNow() {
     setError(null);
 
     if (!dateRange?.from || !dateRange.to || !breakdown) {
@@ -50,40 +47,8 @@ export default function BookingWidget({ property, blockedRanges }: BookingWidget
       return;
     }
 
-    setIsSubmitting(true);
-    try {
-      const res = await fetch("/api/create-checkout-session", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          propertyId: property.id,
-          propertySlug: property.slug,
-          checkIn: dateRange.from.toISOString(),
-          checkOut: dateRange.to.toISOString(),
-          numGuests: guests,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Unable to start checkout. Please try again.");
-      }
-
-      const data = await res.json();
-
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else if (data.sessionId) {
-        router.push(`/book/${property.slug}?session_id=${data.sessionId}`);
-      } else {
-        throw new Error("Missing checkout session data.");
-      }
-    } catch (err: any) {
-      setError(err.message || "Something went wrong. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    // Checkout will be handled later via Firebase Cloud Functions
+    setError("Online checkout is coming soon. Please contact us to complete your reservation.");
   }
 
   return (
@@ -175,10 +140,9 @@ export default function BookingWidget({ property, blockedRanges }: BookingWidget
       <button
         type="button"
         onClick={handleBookNow}
-        disabled={isSubmitting}
-        className="w-full px-4 py-3 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm shadow-warm disabled:opacity-70 disabled:cursor-not-allowed"
+        className="w-full px-4 py-3 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm shadow-warm"
       >
-        {isSubmitting ? "Starting checkout..." : "Book now"}
+        Book now
       </button>
 
       <p className="mt-2 text-xs text-driftwood">

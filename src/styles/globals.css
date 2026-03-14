@@ -53,3 +53,16 @@
     transform: scale(1.1) translate(-2%, -2%);
   }
 }
+
+@keyframes landing-pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(224, 122, 95, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(224, 122, 95, 0.7);
+  }
+}
+
+.animate-landing-pulse {
+  animation: landing-pulse 2.5s ease-in-out infinite;
+}

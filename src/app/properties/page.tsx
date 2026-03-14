@@ -1,11 +1,26 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { getAllProperties } from "@/lib/firestore";
+import type { Property } from "@/types";
 
-export const dynamic = "force-dynamic";
+export default function PropertiesIndexPage() {
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function PropertiesIndexPage() {
-  const properties = await getAllProperties();
+  useEffect(() => {
+    async function load() {
+      try {
+        const all = await getAllProperties();
+        setProperties(all);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
 
   return (
     <div className="bg-sand min-h-screen">
@@ -22,7 +37,9 @@ export default async function PropertiesIndexPage() {
       </section>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
-        {properties.length === 0 ? (
+        {loading ? (
+          <p className="text-driftwood">Loading properties…</p>
+        ) : properties.length === 0 ? (
           <p className="text-driftwood">
             We&apos;re setting up our properties. Check back soon, or reach out via the contact
             details in the footer.
@@ -43,6 +60,7 @@ export default async function PropertiesIndexPage() {
                       fill
                       className="object-cover"
                       sizes="(min-width: 1024px) 50vw, 100vw"
+                      unoptimized
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center text-driftwood">
@@ -81,4 +99,3 @@ export default async function PropertiesIndexPage() {
     </div>
   );
 }
-

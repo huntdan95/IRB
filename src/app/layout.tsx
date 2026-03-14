@@ -4,6 +4,7 @@ import "../styles/globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import LandingGate from "@/components/LandingGate";
 
 const displayFont = DM_Serif_Display({
   weight: ["400"],
@@ -37,9 +38,11 @@ export default function RootLayout({
     <html lang="en" className={`${displayFont.variable} ${bodyFont.variable} ${accentFont.variable}`}>
       <body className="font-body">
         <AuthProvider>
-          <Navbar />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          <LandingGate>
+            <Navbar />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+          </LandingGate>
         </AuthProvider>
       </body>
     </html>

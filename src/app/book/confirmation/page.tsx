@@ -1,28 +1,21 @@
-import { getStripe } from "@/lib/stripe";
-import { notFound } from "next/navigation";
+"use client";
 
-interface ConfirmationPageProps {
-  searchParams?: { session_id?: string; booking_id?: string };
-}
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-export default async function ConfirmationPage({ searchParams }: ConfirmationPageProps) {
-  const sessionId = searchParams?.session_id;
-  const bookingId = searchParams?.booking_id;
+function ConfirmationContent() {
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+  const bookingId = searchParams.get("booking_id");
 
   if (!sessionId || !bookingId) {
-    notFound();
-  }
-
-  const session = await getStripe().checkout.sessions.retrieve(sessionId);
-
-  if (session.payment_status !== "paid") {
     return (
       <div className="bg-sand min-h-screen flex items-center justify-center px-4">
         <div className="max-w-lg bg-white rounded-xl shadow-warm-lg p-8 text-center">
-          <h1 className="font-display text-3xl mb-4 text-deep-ocean">Payment pending</h1>
-          <p className="text-driftwood mb-4">
-            We haven&apos;t received a completed payment for this booking yet. If you believe this is
-            an error, please check your email or try the booking again.
+          <h1 className="font-display text-3xl mb-4 text-deep-ocean">Booking not found</h1>
+          <p className="text-driftwood">
+            Missing session or booking reference. If you just completed a booking, please check your
+            email for confirmation details.
           </p>
         </div>
       </div>
@@ -47,3 +40,16 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
   );
 }
 
+export default function ConfirmationPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="bg-sand min-h-screen flex items-center justify-center">
+          <p className="text-driftwood">Loading…</p>
+        </div>
+      }
+    >
+      <ConfirmationContent />
+    </Suspense>
+  );
+}

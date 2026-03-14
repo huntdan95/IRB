@@ -1,0 +1,20 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/create-checkout-session/route": "app/api/create-checkout-session/route.js",
+  "/book/[propertySlug]/page": "app/book/[propertySlug]/page.js",
+  "/properties/[slug]/page": "app/properties/[slug]/page.js",
+  "/book/confirmation/page": "app/book/confirmation/page.js",
+  "/robots.txt/route": "app/robots.txt/route.js",
+  "/page": "app/page.js",
+  "/sitemap.xml/route": "app/sitemap.xml/route.js",
+  "/properties/page": "app/properties/page.js",
+  "/admin/bookings/page": "app/admin/bookings/page.js",
+  "/admin/bookings/[id]/page": "app/admin/bookings/[id]/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
+  "/admin/properties/page": "app/admin/properties/page.js",
+  "/admin/calendar/page": "app/admin/calendar/page.js",
+  "/admin/page": "app/admin/page.js",
+  "/admin/reviews/page": "app/admin/reviews/page.js",
+  "/admin/settings/page": "app/admin/settings/page.js",
+  "/admin/properties/[slug]/page": "app/admin/properties/[slug]/page.js"
+}
