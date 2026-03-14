@@ -17,7 +17,7 @@ export default function ReviewCard({ review }: ReviewCardProps) {
           {review.rating.toFixed(1)} / 5.0
         </span>
       </div>
-      <p className="text-driftwood italic">"{review.text}"</p>
+      <p className="text-driftwood italic">&ldquo;{review.text}&rdquo;</p>
       <div className="mt-2 text-sm text-deep-ocean font-semibold">— {review.guestName}</div>
       {review.ownerResponse && (
         <div className="mt-3 border-t border-driftwood/20 pt-3 text-sm text-driftwood">

@@ -221,7 +221,7 @@ export default function HomePage() {
                         </span>
                       ))}
                     </div>
-                    <p className="text-driftwood mb-4 italic">"{review.text}"</p>
+                    <p className="text-driftwood mb-4 italic">&ldquo;{review.text}&rdquo;</p>
                     <p className="text-deep-ocean font-semibold">— {review.name}</p>
                   </div>
                 ))}

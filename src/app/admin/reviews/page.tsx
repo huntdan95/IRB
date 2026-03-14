@@ -11,6 +11,7 @@ export default function AdminReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<Filter>("pending");
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [responseDrafts, setResponseDrafts] = useState<Record<string, string>>({});
 
   useEffect(() => {
     async function load() {
@@ -94,7 +95,7 @@ export default function AdminReviewsPage() {
         <div className="space-y-4">
           {filtered.map((review) => {
             const created = review.createdAt.toDate?.() ?? review.createdAt;
-            const [responseDraft, setResponseDraft] = useState(review.ownerResponse ?? "");
+            const responseDraft = responseDrafts[review.id] ?? review.ownerResponse ?? "";
             const isSaving = savingId === review.id;
 
             return (
@@ -114,7 +115,7 @@ export default function AdminReviewsPage() {
                         {review.rating}/5 from {review.guestName}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-driftwood italic">"{review.text}"</p>
+                    <p className="mt-2 text-sm text-driftwood italic">&ldquo;{review.text}&rdquo;</p>
                     <p className="mt-2 text-xs text-driftwood/80">
                       Submitted {created.toLocaleDateString()} • Source: {review.source}
                     </p>
@@ -145,7 +146,9 @@ export default function AdminReviewsPage() {
                   </label>
                   <textarea
                     value={responseDraft}
-                    onChange={(e) => setResponseDraft(e.target.value)}
+                    onChange={(e) =>
+                      setResponseDrafts((prev) => ({ ...prev, [review.id]: e.target.value }))
+                    }
                     className="w-full px-3 py-2 border border-driftwood/30 rounded-lg bg-sand/40 text-sm min-h-[80px]"
                     placeholder="Thank you for staying with us! We loved hosting you…"
                   />
