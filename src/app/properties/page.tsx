@@ -2,6 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { getAllProperties } from "@/lib/firestore";
 
+export const dynamic = "force-dynamic";
+
 export default async function PropertiesIndexPage() {
   const properties = await getAllProperties();
 

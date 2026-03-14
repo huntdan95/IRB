@@ -12,11 +12,12 @@ import {
   Timestamp,
   QueryConstraint,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { getDb } from "./firebase";
 import type { Property, Booking, Review, SiteSettings } from "@/types";
 
 // Properties
 export async function getProperty(slug: string): Promise<Property | null> {
+  const db = getDb();
   const propertiesRef = collection(db, "properties");
   const q = query(propertiesRef, where("slug", "==", slug), where("active", "==", true));
   const snapshot = await getDocs(q);
@@ -28,6 +29,7 @@ export async function getProperty(slug: string): Promise<Property | null> {
 }
 
 export async function getAllProperties(): Promise<Property[]> {
+  const db = getDb();
   const propertiesRef = collection(db, "properties");
   const q = query(propertiesRef, where("active", "==", true), orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
@@ -42,6 +44,7 @@ export async function updateProperty(
   id: string,
   data: Partial<Property>
 ): Promise<void> {
+  const db = getDb();
   const ref = doc(db, "properties", id);
   await updateDoc(ref, {
     ...data,
@@ -56,6 +59,7 @@ export async function createManualBlock(params: {
   notes?: string;
 }): Promise<string> {
   const { propertyId, checkIn, checkOut, notes } = params;
+  const db = getDb();
   const bookingsRef = collection(db, "bookings");
   const docRef = await addDoc(bookingsRef, {
     propertyId,
@@ -83,6 +87,7 @@ export async function createManualBlock(params: {
 }
 
 export async function getAllReviews(): Promise<Review[]> {
+  const db = getDb();
   const reviewsRef = collection(db, "reviews");
   const snapshot = await getDocs(reviewsRef);
   return snapshot.docs.map((doc) => ({
@@ -95,6 +100,7 @@ export async function updateReview(
   id: string,
   data: Partial<Review>
 ): Promise<void> {
+  const db = getDb();
   const ref = doc(db, "reviews", id);
   await updateDoc(ref, {
     ...data,
@@ -105,6 +111,7 @@ export async function updateSiteSettings(
   id: string,
   data: Partial<SiteSettings>
 ): Promise<void> {
+  const db = getDb();
   const ref = doc(db, "siteSettings", id);
   await updateDoc(ref, {
     ...data,
@@ -117,6 +124,7 @@ export async function getBookings(
   propertyId?: string,
   constraints?: QueryConstraint[]
 ): Promise<Booking[]> {
+  const db = getDb();
   const bookingsRef = collection(db, "bookings");
   let q = query(bookingsRef);
   
@@ -136,6 +144,7 @@ export async function getBookings(
 }
 
 export async function getBookingById(id: string): Promise<Booking | null> {
+  const db = getDb();
   const ref = doc(db, "bookings", id);
   const snap = await getDoc(ref);
   if (!snap.exists()) return null;
@@ -143,6 +152,7 @@ export async function getBookingById(id: string): Promise<Booking | null> {
 }
 
 export async function createBooking(booking: Omit<Booking, "id">): Promise<string> {
+  const db = getDb();
   const bookingsRef = collection(db, "bookings");
   const docRef = await addDoc(bookingsRef, {
     ...booking,
@@ -154,6 +164,7 @@ export async function createBooking(booking: Omit<Booking, "id">): Promise<strin
 
 // Reviews
 export async function getReviews(propertyId?: string): Promise<Review[]> {
+  const db = getDb();
   const reviewsRef = collection(db, "reviews");
   let q = query(reviewsRef, where("approved", "==", true));
   
@@ -170,6 +181,7 @@ export async function getReviews(propertyId?: string): Promise<Review[]> {
 
 // Site Settings
 export async function getSiteSettings(): Promise<SiteSettings | null> {
+  const db = getDb();
   const settingsRef = collection(db, "siteSettings");
   const snapshot = await getDocs(settingsRef);
   

@@ -37,6 +37,7 @@ export default function AdminPropertyPage({ params }: AdminPropertyPageProps) {
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
+    if (!property) return;
     setSaving(true);
     setMessage(null);
     try {
@@ -70,6 +71,7 @@ export default function AdminPropertyPage({ params }: AdminPropertyPageProps) {
   };
 
   const handleNearbyChange = (value: string) => {
+    if (!property) return;
     const items = value
       .split("\n")
       .map((line) => line.trim())

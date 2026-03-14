@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Timestamp } from "firebase/firestore";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { getProperty, createBooking } from "@/lib/firestore";
 import { getBlockedRangesForProperty, isRangeAvailable } from "@/lib/availability";
 import { calculatePricingForStay } from "@/lib/pricing";
@@ -62,7 +62,7 @@ export async function POST(request: Request) {
       updatedAt: Timestamp.now(),
     });
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [

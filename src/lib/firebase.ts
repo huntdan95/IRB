@@ -14,25 +14,33 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-let app: FirebaseApp;
-if (getApps().length === 0) {
+let app: FirebaseApp | null = null;
+
+export function getApp(): FirebaseApp {
+  if (app) return app;
+  if (getApps().length > 0) {
+    app = getApps()[0] as FirebaseApp;
+    return app;
+  }
   app = initializeApp(firebaseConfig);
-} else {
-  app = getApps()[0];
+  return app;
 }
 
-// Initialize services
-export const auth: Auth = getAuth(app);
-export const db: Firestore = getFirestore(app);
-export const storage: FirebaseStorage = getStorage(app);
+export function getAuthInstance(): Auth {
+  return getAuth(getApp());
+}
 
-// Initialize Analytics (only on client-side)
-export const getAnalyticsInstance = async (): Promise<Analytics | null> => {
+export function getDb(): Firestore {
+  return getFirestore(getApp());
+}
+
+export function getStorageInstance(): FirebaseStorage {
+  return getStorage(getApp());
+}
+
+export async function getAnalyticsInstance(): Promise<Analytics | null> {
   if (typeof window === "undefined") return null;
   const supported = await isSupported();
   if (!supported) return null;
-  return getAnalytics(app);
-};
-
-export default app;
+  return getAnalytics(getApp());
+}

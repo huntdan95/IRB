@@ -1,4 +1,4 @@
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { notFound } from "next/navigation";
 
 interface ConfirmationPageProps {
@@ -13,7 +13,7 @@ export default async function ConfirmationPage({ searchParams }: ConfirmationPag
     notFound();
   }
 
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
+  const session = await getStripe().checkout.sessions.retrieve(sessionId);
 
   if (session.payment_status !== "paid") {
     return (
