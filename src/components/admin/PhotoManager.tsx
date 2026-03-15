@@ -9,12 +9,16 @@ import { updateProperty } from "@/lib/firestore";
 interface PhotoManagerProps {
   propertyId: string;
   photos: PropertyPhoto[];
+  heroImage?: string;
   onChange: (photos: PropertyPhoto[]) => void;
+  onSetHero?: (url: string) => void;
 }
 
-export default function PhotoManager({ propertyId, photos, onChange }: PhotoManagerProps) {
+export default function PhotoManager({ propertyId, photos, heroImage, onChange, onSetHero }: PhotoManagerProps) {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<PropertyPhoto | null>(null);
+  const [enlargedUrl, setEnlargedUrl] = useState<string | null>(null);
 
   const sorted = [...photos].sort((a, b) => a.order - b.order);
 
@@ -45,12 +49,14 @@ export default function PhotoManager({ propertyId, photos, onChange }: PhotoMana
   }
 
   async function handleDelete(photo: PropertyPhoto) {
+    if (!deleteTarget) return;
     setSaving(true);
     try {
       await deleteFileByUrl(photo.url);
       const nextPhotos = sorted.filter((p) => p.url !== photo.url);
       onChange(nextPhotos);
       await updateProperty(propertyId, { photos: nextPhotos } as any);
+      setDeleteTarget(null);
     } finally {
       setSaving(false);
     }
@@ -88,8 +94,7 @@ export default function PhotoManager({ propertyId, photos, onChange }: PhotoMana
         </label>
       </div>
       <p className="text-xs text-driftwood">
-        Upload high-resolution images. Drag-and-drop reordering will arrive later; for now, use the
-        left/right arrows to adjust order.
+        Drag to reorder with arrows. Click a photo to enlarge. Star to set as cover image.
       </p>
 
       {sorted.length === 0 ? (
@@ -103,7 +108,10 @@ export default function PhotoManager({ propertyId, photos, onChange }: PhotoMana
               key={photo.url}
               className="bg-white rounded-xl shadow-warm overflow-hidden flex flex-col"
             >
-              <div className="relative aspect-[4/3]">
+              <div
+                className="relative aspect-[4/3] cursor-pointer"
+                onClick={() => setEnlargedUrl(photo.url)}
+              >
                 <Image
                   src={photo.url}
                   alt={photo.caption || `Photo ${index + 1}`}
@@ -111,10 +119,25 @@ export default function PhotoManager({ propertyId, photos, onChange }: PhotoMana
                   className="object-cover"
                   sizes="(min-width: 1024px) 33vw, 50vw"
                 />
+                {onSetHero && (
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); onSetHero(photo.url); }}
+                    className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 shadow flex items-center justify-center hover:bg-white"
+                    title="Set as cover photo"
+                  >
+                    <span className={heroImage === photo.url ? "text-amber-500" : "text-driftwood"}>
+                      ★
+                    </span>
+                  </button>
+                )}
               </div>
               <div className="px-3 py-2 flex items-center justify-between text-xs text-driftwood border-t border-driftwood/20">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold">#{photo.order}</span>
+                  {heroImage === photo.url && (
+                    <span className="text-amber-600 text-[10px]">Cover</span>
+                  )}
                 </div>
                 <div className="flex items-center gap-1">
                   <button
@@ -136,7 +159,7 @@ export default function PhotoManager({ propertyId, photos, onChange }: PhotoMana
                   <button
                     type="button"
                     className="ml-1 text-coral hover:text-coral/80"
-                    onClick={() => handleDelete(photo)}
+                    onClick={() => setDeleteTarget(photo)}
                   >
                     Delete
                   </button>
@@ -144,6 +167,46 @@ export default function PhotoManager({ propertyId, photos, onChange }: PhotoMana
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {enlargedUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setEnlargedUrl(null)}
+        >
+          <img
+            src={enlargedUrl}
+            alt="Enlarged"
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
+      {deleteTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+          <div className="bg-white rounded-xl shadow-warm-lg p-6 max-w-sm w-full">
+            <h3 className="font-display text-lg text-deep-ocean mb-2">Delete this photo?</h3>
+            <p className="text-sm text-driftwood mb-4">This cannot be undone.</p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setDeleteTarget(null)}
+                className="flex-1 px-3 py-2 rounded-lg border border-driftwood/40 text-sm"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => handleDelete(deleteTarget)}
+                disabled={saving}
+                className="flex-1 px-3 py-2 rounded-lg bg-coral text-white text-sm font-semibold disabled:opacity-70"
+              >
+                {saving ? "Deleting…" : "Delete"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

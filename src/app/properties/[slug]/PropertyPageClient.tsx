@@ -95,7 +95,7 @@ export default function PropertyPageClient() {
   }
 
   const nightSummary = `${property.specs.bedrooms} Bedrooms · ${property.specs.bathrooms} Bathrooms · Sleeps ${property.specs.maxGuests} · Gulf View`;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://irbcondos.com";
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "VacationRental",

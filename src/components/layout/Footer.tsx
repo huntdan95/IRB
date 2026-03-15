@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <h3 className="font-display text-2xl mb-4">IRB Rentals</h3>
+            <h3 className="font-display text-2xl mb-4">IRB Condos</h3>
             <p className="text-sand/80 mb-4">
               Your Gulf Coast escape awaits. Experience the best of Indian Rocks Beach in our
               beachfront condos.
@@ -65,7 +65,7 @@ export default function Footer() {
         </div>
         
         <div className="border-t border-driftwood/20 mt-8 pt-8 text-center text-sand/60 text-sm">
-          <p>&copy; {new Date().getFullYear()} IRB Rentals. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} IRB Condos. All rights reserved.</p>
         </div>
       </div>
     </footer>

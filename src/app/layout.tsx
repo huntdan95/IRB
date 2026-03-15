@@ -24,9 +24,28 @@ const accentFont = Caveat({
   variable: "--font-accent",
 });
 
+const metadataBase = new URL("https://irbcondos.com");
+
 export const metadata: Metadata = {
-  title: "IRB Rentals | Your Gulf Coast Escape",
-  description: "Beachfront vacation rentals in Indian Rocks Beach, Florida",
+  metadataBase,
+  title: "IRB Condos | Beachfront Vacation Rentals in Indian Rocks Beach",
+  description:
+    "Book your stay at our beautifully updated beachfront condos in Indian Rocks Beach, Florida. Gulf views, steps from the sand, fully equipped — your perfect beach getaway.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: metadataBase.origin,
+    siteName: "IRB Condos",
+    title: "IRB Condos | Beachfront Vacation Rentals in Indian Rocks Beach",
+    description:
+      "Book your stay at our beautifully updated beachfront condos in Indian Rocks Beach, Florida. Gulf views, steps from the sand, fully equipped — your perfect beach getaway.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "IRB Condos | Beachfront Vacation Rentals in Indian Rocks Beach",
+    description:
+      "Book your stay at our beautifully updated beachfront condos in Indian Rocks Beach, Florida. Gulf views, steps from the sand, fully equipped — your perfect beach getaway.",
+  },
 };
 
 export default function RootLayout({

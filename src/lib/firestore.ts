@@ -33,11 +33,18 @@ export async function getAllProperties(): Promise<Property[]> {
   const propertiesRef = collection(db, "properties");
   const q = query(propertiesRef, where("active", "==", true), orderBy("createdAt", "desc"));
   const snapshot = await getDocs(q);
-  
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
+  return snapshot.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
   })) as Property[];
+}
+
+export async function getPropertyById(id: string): Promise<Property | null> {
+  const db = getDb();
+  const ref = doc(db, "properties", id);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return null;
+  return { id: snap.id, ...snap.data() } as Property;
 }
 
 export async function updateProperty(
@@ -89,11 +96,24 @@ export async function createManualBlock(params: {
 export async function getAllReviews(): Promise<Review[]> {
   const db = getDb();
   const reviewsRef = collection(db, "reviews");
-  const snapshot = await getDocs(reviewsRef);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
+  const q = query(reviewsRef, orderBy("createdAt", "desc"));
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
   })) as Review[];
+}
+
+export async function createReview(
+  review: Omit<Review, "id">
+): Promise<string> {
+  const db = getDb();
+  const reviewsRef = collection(db, "reviews");
+  const docRef = await addDoc(reviewsRef, {
+    ...review,
+    createdAt: review.createdAt ?? Timestamp.now(),
+  });
+  return docRef.id;
 }
 
 export async function updateReview(
@@ -126,20 +146,24 @@ export async function getBookings(
 ): Promise<Booking[]> {
   const db = getDb();
   const bookingsRef = collection(db, "bookings");
-  let q = query(bookingsRef);
-  
-  if (propertyId) {
-    q = query(bookingsRef, where("propertyId", "==", propertyId));
+  let q;
+  if (constraints && constraints.length > 0) {
+    q = propertyId
+      ? query(bookingsRef, where("propertyId", "==", propertyId), ...constraints)
+      : query(bookingsRef, ...constraints);
+  } else {
+    q = propertyId
+      ? query(
+          bookingsRef,
+          where("propertyId", "==", propertyId),
+          orderBy("createdAt", "desc")
+        )
+      : query(bookingsRef, orderBy("createdAt", "desc"));
   }
-  
-  if (constraints) {
-    q = query(bookingsRef, ...constraints);
-  }
-  
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
+  return snapshot.docs.map((d) => ({
+    id: d.id,
+    ...d.data(),
   })) as Booking[];
 }
 
@@ -160,6 +184,18 @@ export async function createBooking(booking: Omit<Booking, "id">): Promise<strin
     updatedAt: Timestamp.now(),
   });
   return docRef.id;
+}
+
+export async function updateBooking(
+  id: string,
+  data: Partial<Booking>
+): Promise<void> {
+  const db = getDb();
+  const ref = doc(db, "bookings", id);
+  await updateDoc(ref, {
+    ...data,
+    updatedAt: Timestamp.now(),
+  });
 }
 
 // Reviews

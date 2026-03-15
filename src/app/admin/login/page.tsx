@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { getSiteSettings } from "@/lib/firestore";
 
 export default function AdminLoginPage() {
   const { signIn, loading, user } = useAuth();
@@ -11,6 +12,11 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [brandName, setBrandName] = useState("IRB Condos");
+
+  useEffect(() => {
+    getSiteSettings().then((s) => s && setBrandName(s.brandName));
+  }, []);
 
   if (!loading && user) {
     router.replace("/admin");
@@ -33,9 +39,13 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-sand px-4">
       <div className="w-full max-w-md bg-white rounded-xl shadow-warm-lg p-8">
-        <h1 className="font-display text-3xl mb-2 text-deep-ocean text-center">Owner sign in</h1>
+        <div className="text-center mb-6">
+          <h1 className="font-display text-3xl text-deep-ocean">{brandName}</h1>
+          <p className="text-xs text-driftwood mt-1">Owner Admin</p>
+        </div>
+        <h2 className="font-display text-xl mb-2 text-deep-ocean text-center">Sign in</h2>
         <p className="text-sm text-driftwood mb-6 text-center">
-          Access your private admin dashboard. If you&apos;re not the owner, you won&apos;t need this page.
+          Access your private admin dashboard.
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -71,7 +81,7 @@ export default function AdminLoginPage() {
             disabled={submitting}
             className="w-full px-4 py-2 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm shadow-warm disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {submitting ? "Signing in..." : "Sign in"}
+            {submitting ? "Signing in…" : "Sign In"}
           </button>
         </form>
 

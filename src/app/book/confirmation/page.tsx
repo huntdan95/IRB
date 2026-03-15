@@ -22,18 +22,24 @@ function ConfirmationContent() {
     );
   }
 
+  // Payment is not verified on this static/client-only page. Do not show a
+  // success message that implies payment is confirmed; that would allow
+  // anyone to fake the URL and see a false confirmation.
   return (
     <div className="bg-sand min-h-screen flex items-center justify-center px-4">
       <div className="max-w-lg bg-white rounded-xl shadow-warm-lg p-8 text-center">
-        <h1 className="font-display text-3xl mb-4 text-deep-ocean">Thank you for your booking</h1>
+        <h1 className="font-display text-3xl mb-4 text-deep-ocean">
+          We&apos;ve received your booking reference
+        </h1>
         <p className="text-driftwood mb-4">
-          Your reservation is confirmed. We&apos;re excited to host your stay on the Gulf Coast.
+          You will receive a confirmation email once your payment has been verified. If you did not
+          complete payment, please return to the property page to finish your reservation.
         </p>
         <p className="text-sm text-driftwood mb-2">
-          Booking reference: <span className="font-mono">{bookingId}</span>
+          Reference: <span className="font-mono">{bookingId}</span>
         </p>
         <p className="text-sm text-driftwood/80">
-          A confirmation email with your stay details will arrive shortly.
+          Questions? Check your email or contact us with the reference above.
         </p>
       </div>
     </div>

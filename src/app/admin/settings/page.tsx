@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import type { SiteSettings } from "@/types";
 import { getSiteSettings, updateSiteSettings } from "@/lib/firestore";
+import { useToast } from "@/context/ToastContext";
 
 export default function AdminSettingsPage() {
+  const { showToast } = useToast();
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -23,11 +24,12 @@ export default function AdminSettingsPage() {
     e.preventDefault();
     if (!settings) return;
     setSaving(true);
-    setMessage(null);
     try {
       const { id, updatedAt, ...rest } = settings;
-      await updateSiteSettings(id, rest as any);
-      setMessage("Settings saved.");
+      await updateSiteSettings(id, rest);
+      showToast("Settings saved.");
+    } catch (err: any) {
+      showToast(err?.message ?? "Failed to save.", "error");
     } finally {
       setSaving(false);
     }
@@ -53,8 +55,6 @@ export default function AdminSettingsPage() {
           Control high-level branding and contact details used across the site.
         </p>
       </div>
-
-      {message && <p className="text-xs text-sea-glass">{message}</p>}
 
       <section className="bg-white rounded-xl shadow-warm p-5 space-y-4">
         <h2 className="font-display text-xl text-deep-ocean">Brand</h2>

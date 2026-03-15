@@ -3,13 +3,14 @@ import Script from "next/script";
 import ScrollReveal from "@/components/ui/ScrollReveal";
 
 export default function HomePage() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://irbcondos.com";
 
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "LodgingBusiness",
-    name: "IRB Rentals",
-    description: "Beachfront vacation rentals in Indian Rocks Beach, Florida.",
+    name: "IRB Condos",
+    description:
+      "Book your stay at our beautifully updated beachfront condos in Indian Rocks Beach, Florida. Gulf views, steps from the sand, fully equipped.",
     url: siteUrl,
     address: {
       "@type": "PostalAddress",
