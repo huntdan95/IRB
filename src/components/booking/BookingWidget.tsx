@@ -52,7 +52,7 @@ export default function BookingWidget({ property, blockedRanges }: BookingWidget
   }
 
   return (
-    <aside className="bg-white rounded-xl shadow-warm-lg p-6 sticky top-24 space-y-4">
+    <aside className="bg-white rounded-xl shadow-warm-lg p-6 sticky top-24 space-y-4 overflow-hidden min-w-0 max-w-full">
       <div className="flex items-baseline justify-between">
         <div>
           <span className="text-2xl font-semibold text-coral">
@@ -66,7 +66,7 @@ export default function BookingWidget({ property, blockedRanges }: BookingWidget
       </div>
 
       <div className="space-y-3">
-        <div>
+        <div className="min-w-0 w-full">
           <label className="block text-xs font-semibold text-driftwood mb-1">
             Dates
           </label>

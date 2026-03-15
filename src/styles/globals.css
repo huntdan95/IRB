@@ -66,3 +66,32 @@
 .animate-landing-pulse {
   animation: landing-pulse 2.5s ease-in-out infinite;
 }
+
+/* Property page booking calendar: single month, contained, coastal theme */
+.booking-calendar {
+  --rdp-cell-size: 36px;
+  --rdp-caption-font-size: 14px;
+  --rdp-accent-color: var(--color-sea-glass);
+  --rdp-background-color: rgba(168, 146, 121, 0.12);
+  --rdp-selected-color: #fff;
+}
+.booking-calendar .rdp {
+  margin: 0;
+  max-width: 100%;
+}
+.booking-calendar .rdp-months {
+  display: block;
+}
+.booking-calendar .rdp-month {
+  margin: 0;
+  max-width: 100%;
+}
+.booking-calendar .rdp-table {
+  max-width: calc(var(--rdp-cell-size) * 7);
+  margin: 0 auto;
+}
+@media (max-width: 480px) {
+  .booking-calendar {
+    --rdp-cell-size: 32px;
+  }
+}
