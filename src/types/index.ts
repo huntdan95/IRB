@@ -6,6 +6,8 @@ export interface Property {
   slug: string;
   description: string;
   shortDescription: string;
+  /** Optional copy for homepage property cards; falls back to shortDescription if not set */
+  cardDescription?: string;
   heroImage: string;
   photos: PropertyPhoto[];
   amenities: Amenity[];

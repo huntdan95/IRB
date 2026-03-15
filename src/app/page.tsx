@@ -1,6 +1,8 @@
 import Link from "next/link";
+import Image from "next/image";
 import Script from "next/script";
 import ScrollReveal from "@/components/ui/ScrollReveal";
+import { BEACHFRONT_PROPERTIES } from "@/data/beachfrontProperties";
 
 export default function HomePage() {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://irbcondos.com";
@@ -83,81 +85,54 @@ export default function HomePage() {
               </h2>
             </ScrollReveal>
             <div className="grid md:grid-cols-2 gap-8">
-              {/* Property Card 1 */}
-              <ScrollReveal delay={100}>
-                <div className="bg-white rounded-xl overflow-hidden shadow-warm-lg hover:shadow-warm transition-warm group">
-                  <div className="relative h-64 bg-driftwood/20 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-sea-glass/20 to-coral/20 flex items-center justify-center">
-                      <p className="text-driftwood">Property Image Placeholder</p>
+              {BEACHFRONT_PROPERTIES.map((property, index) => (
+                <ScrollReveal key={property.id} delay={index === 0 ? 100 : 200}>
+                  <div className="bg-white rounded-xl overflow-hidden shadow-warm-lg hover:shadow-warm transition-warm group">
+                    <div className="relative h-64 bg-driftwood/20 overflow-hidden">
+                      <Image
+                        src={property.heroImage}
+                        alt={property.name}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="(min-width: 768px) 50vw, 100vw"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-display text-2xl mb-2 text-deep-ocean">Condo A</h3>
-                    <div className="flex flex-wrap gap-4 mb-4 text-sm text-driftwood">
-                      <span>2 Bedrooms</span>
-                      <span>•</span>
-                      <span>2 Bathrooms</span>
-                      <span>•</span>
-                      <span>Sleeps 6</span>
-                      <span>•</span>
-                      <span>1,200 sqft</span>
-                    </div>
-                    <p className="text-deep-ocean mb-4">
-                      Beautiful beachfront condo with panoramic Gulf views and modern amenities.
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="text-2xl font-semibold text-coral">$200</span>
-                        <span className="text-driftwood">/night</span>
+                    <div className="p-6">
+                      <h3 className="font-display text-2xl mb-2 text-deep-ocean">
+                        {property.name}
+                      </h3>
+                      <div className="flex flex-wrap gap-4 mb-4 text-sm text-driftwood">
+                        <span>2 BR</span>
+                        <span>·</span>
+                        <span>2 BA</span>
+                        <span>·</span>
+                        <span>Gulf View</span>
+                        <span>·</span>
+                        <span>Sleeps 6</span>
                       </div>
-                      <Link
-                        href="/properties/condo-a"
-                        className="px-6 py-2 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm"
-                      >
-                        View Property →
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </ScrollReveal>
-
-              {/* Property Card 2 */}
-              <ScrollReveal delay={200}>
-                <div className="bg-white rounded-xl overflow-hidden shadow-warm-lg hover:shadow-warm transition-warm group">
-                  <div className="relative h-64 bg-driftwood/20 overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-sea-glass/20 to-coral/20 flex items-center justify-center">
-                      <p className="text-driftwood">Property Image Placeholder</p>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="font-display text-2xl mb-2 text-deep-ocean">Condo B</h3>
-                    <div className="flex flex-wrap gap-4 mb-4 text-sm text-driftwood">
-                      <span>2 Bedrooms</span>
-                      <span>•</span>
-                      <span>2 Bathrooms</span>
-                      <span>•</span>
-                      <span>Sleeps 6</span>
-                      <span>•</span>
-                      <span>1,200 sqft</span>
-                    </div>
-                    <p className="text-deep-ocean mb-4">
-                      Stunning beachfront condo with direct beach access and luxury finishes.
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <span className="text-2xl font-semibold text-coral">$200</span>
-                        <span className="text-driftwood">/night</span>
+                      <p className="text-deep-ocean mb-4">
+                        {property.cardDescription ?? property.shortDescription}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <span className="text-2xl font-semibold text-coral">
+                            ${property.pricing.baseRate}
+                          </span>
+                          <span className="text-driftwood">/night</span>
+                        </div>
+                        <Link
+                          href={`/properties/${property.slug}`}
+                          className="px-6 py-2 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm"
+                        >
+                          View Property →
+                        </Link>
                       </div>
-                      <Link
-                        href="/properties/condo-b"
-                        className="px-6 py-2 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm"
-                      >
-                        View Property →
-                      </Link>
                     </div>
                   </div>
-                </div>
-              </ScrollReveal>
+                </ScrollReveal>
+              ))}
             </div>
           </div>
         </section>

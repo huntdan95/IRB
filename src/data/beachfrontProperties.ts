@@ -80,6 +80,7 @@ export const SUNRISE_SUITE: Property = {
   description:
     "Wake up to stunning Gulf views in our beautifully renovated Sunrise Suite. This modern 2-bedroom, 2-bathroom condo features an open floor plan with updated finishes throughout, a fully equipped kitchen, and a private balcony overlooking the Gulf of Mexico. Located in the heart of Indian Rocks Beach, you're just steps from the sand and minutes from local restaurants and shops.",
   shortDescription: "Modern 2BR/2BA beachfront condo with Gulf views — steps from the sand in Indian Rocks Beach.",
+  cardDescription: "Wake up to stunning Gulf views in our beautifully renovated Sunrise Suite.",
   heroImage: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=1200",
   photos: SUNRISE_PHOTOS,
   amenities: SHARED_AMENITIES,
@@ -111,6 +112,7 @@ export const SUNSET_SUITE: Property = {
   description:
     "Unwind with breathtaking sunset views over the Gulf in our completely updated Sunset Suite. This spacious 2-bedroom, 2-bathroom condo offers contemporary design, a fully equipped kitchen, comfortable living spaces, and a private balcony perfect for watching the sun dip below the horizon. Located in Indian Rocks Beach, the beach is right at your doorstep.",
   shortDescription: "Spacious 2BR/2BA beachfront condo with sunset views — right on the Gulf in Indian Rocks Beach.",
+  cardDescription: "Unwind with breathtaking sunset views over the Gulf in our completely updated Sunset Suite.",
   heroImage: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200",
   photos: SUNSET_PHOTOS,
   amenities: SHARED_AMENITIES,
