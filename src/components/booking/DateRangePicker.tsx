@@ -42,8 +42,7 @@ export default function DateRangePicker({ value, onChange, disabled }: DateRange
           tbody: "border-0",
           row: "border-0",
           cell: "p-0 text-center w-9",
-          day: "h-9 w-9 rounded-full text-sm font-medium transition-warm",
-          day_button: "h-9 w-9 rounded-full flex items-center justify-center w-full",
+          day: "h-9 w-9 rounded-full flex items-center justify-center w-full text-sm font-medium transition-warm",
           day_outside: "text-driftwood/50 opacity-60",
           day_today: "font-semibold text-deep-ocean",
         }}
