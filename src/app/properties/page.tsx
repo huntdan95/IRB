@@ -1,100 +1,69 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { getAllProperties } from "@/lib/firestore";
-import type { Property } from "@/types";
+import { BEACHFRONT_PROPERTIES } from "@/data/beachfrontProperties";
 
 export default function PropertiesIndexPage() {
-  const [properties, setProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function load() {
-      try {
-        const all = await getAllProperties();
-        setProperties(all);
-      } finally {
-        setLoading(false);
-      }
-    }
-    load();
-  }, []);
-
   return (
     <div className="bg-sand min-h-screen">
       <section className="bg-shell/60 border-b border-driftwood/20">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <h1 className="font-display text-3xl md:text-4xl lg:text-5xl text-deep-ocean mb-3">
-            Our Beachfront Condos
+            Our Properties
           </h1>
-          <p className="text-driftwood max-w-2xl">
-            Two side-by-side beachfront condos on Indian Rocks Beach, thoughtfully designed for
-            relaxed, modern coastal living.
+          <p className="text-driftwood max-w-2xl text-lg">
+            Two beautifully updated beachfront condos in Indian Rocks Beach, Florida — steps from the
+            Gulf of Mexico.
           </p>
         </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-4 py-12">
-        {loading ? (
-          <p className="text-driftwood">Loading properties…</p>
-        ) : properties.length === 0 ? (
-          <p className="text-driftwood">
-            We&apos;re setting up our properties. Check back soon, or reach out via the contact
-            details in the footer.
-          </p>
-        ) : (
-          <div className="grid md:grid-cols-2 gap-8">
-            {properties.map((property) => (
-              <Link
-                key={property.id}
-                href={`/properties/${property.slug}`}
-                className="bg-white rounded-xl overflow-hidden shadow-warm-lg hover:shadow-warm transition-warm flex flex-col"
-              >
-                <div className="relative h-64 bg-driftwood/10">
-                  {property.heroImage ? (
-                    <Image
-                      src={property.heroImage}
-                      alt={property.name}
-                      fill
-                      className="object-cover"
-                      sizes="(min-width: 1024px) 50vw, 100vw"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center text-driftwood">
-                      Property image coming soon
-                    </div>
-                  )}
+        <div className="grid md:grid-cols-2 gap-8">
+          {BEACHFRONT_PROPERTIES.map((property) => (
+            <Link
+              key={property.id}
+              href={`/properties/${property.slug}`}
+              className="bg-white rounded-xl overflow-hidden shadow-warm-lg hover:shadow-warm transition-warm flex flex-col group"
+            >
+              <div className="relative h-72 md:h-80 bg-driftwood/10 overflow-hidden">
+                <Image
+                  src={property.heroImage}
+                  alt={property.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  unoptimized
+                  priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              </div>
+              <div className="p-6 flex-1 flex flex-col justify-between">
+                <div>
+                  <h2 className="font-display text-2xl md:text-3xl mb-2 text-deep-ocean">
+                    {property.name}
+                  </h2>
+                  <p className="text-sm text-driftwood mb-3">
+                    2 BR · 2 BA · Gulf View · Sleeps 6
+                  </p>
+                  <p className="text-driftwood mb-4">{property.shortDescription}</p>
                 </div>
-                <div className="p-6 flex-1 flex flex-col justify-between">
+                <div className="flex items-center justify-between pt-2">
                   <div>
-                    <h2 className="font-display text-2xl mb-2 text-deep-ocean">
-                      {property.name}
-                    </h2>
-                    <p className="text-sm text-driftwood mb-3">
-                      {property.specs.bedrooms} bd • {property.specs.bathrooms} ba • sleeps{" "}
-                      {property.specs.maxGuests} • {property.specs.sqft.toLocaleString()} sqft
-                    </p>
-                    <p className="text-driftwood mb-4">{property.shortDescription}</p>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <span className="text-2xl font-semibold text-coral">
-                        ${property.pricing.baseRate}
-                      </span>
-                      <span className="text-driftwood"> / night</span>
-                    </div>
-                    <span className="text-sea-glass font-semibold text-sm">
-                      View property →
+                    <span className="text-2xl font-semibold text-coral">
+                      ${property.pricing.baseRate}
                     </span>
+                    <span className="text-driftwood"> / night</span>
                   </div>
+                  <span className="text-sea-glass font-semibold text-sm group-hover:underline">
+                    View Property →
+                  </span>
                 </div>
-              </Link>
-            ))}
-          </div>
-        )}
+              </div>
+            </Link>
+          ))}
+        </div>
       </section>
     </div>
   );

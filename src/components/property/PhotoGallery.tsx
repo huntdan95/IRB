@@ -25,40 +25,51 @@ export default function PhotoGallery({ photos, propertyName }: PhotoGalleryProps
 
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="space-y-4">
+        <div className="grid gap-4 md:grid-cols-3">
+          <button
+            type="button"
+            className="relative md:col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-warm-lg group"
+            onClick={() => setActiveIndex(0)}
+          >
+            <Image
+              src={hero.url}
+              alt={hero.caption || propertyName}
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              sizes="(min-width: 1024px) 66vw, 100vw"
+              unoptimized
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent" />
+          </button>
+
+          <div className="grid grid-cols-2 gap-4">
+            {thumbnails.map((photo, index) => (
+              <button
+                key={photo.url}
+                type="button"
+                className="relative aspect-square overflow-hidden rounded-xl shadow-warm group"
+                onClick={() => setActiveIndex(index + 1)}
+              >
+                <Image
+                  src={photo.url}
+                  alt={photo.caption || propertyName}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="(min-width: 1024px) 33vw, 50vw"
+                  unoptimized
+                />
+              </button>
+            ))}
+          </div>
+        </div>
         <button
           type="button"
-          className="relative md:col-span-2 aspect-[16/10] overflow-hidden rounded-xl shadow-warm-lg group"
+          className="text-sea-glass font-semibold text-sm hover:underline"
           onClick={() => setActiveIndex(0)}
         >
-          <Image
-            src={hero.url}
-            alt={hero.caption || propertyName}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(min-width: 1024px) 66vw, 100vw"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent" />
+          View All Photos
         </button>
-
-        <div className="grid grid-cols-2 gap-4">
-          {thumbnails.map((photo, index) => (
-            <button
-              key={photo.url}
-              type="button"
-              className="relative aspect-square overflow-hidden rounded-xl shadow-warm group"
-              onClick={() => setActiveIndex(index + 1)}
-            >
-              <Image
-                src={photo.url}
-                alt={photo.caption || propertyName}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(min-width: 1024px) 33vw, 50vw"
-              />
-            </button>
-          ))}
-        </div>
       </div>
 
       {activeIndex !== null && (
@@ -76,6 +87,7 @@ export default function PhotoGallery({ photos, propertyName }: PhotoGalleryProps
               fill
               className="object-cover rounded-xl shadow-warm-lg"
               sizes="100vw"
+              unoptimized
             />
             {photos[activeIndex].caption && (
               <div className="absolute bottom-0 inset-x-0 bg-black/50 text-sand text-sm px-4 py-3 rounded-b-xl">

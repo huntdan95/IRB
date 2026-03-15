@@ -140,13 +140,13 @@ export default function BookingWidget({ property, blockedRanges }: BookingWidget
       <button
         type="button"
         onClick={handleBookNow}
-        className="w-full px-4 py-3 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm shadow-warm"
+        className="w-full px-4 py-3 bg-sea-glass text-white rounded-lg hover:bg-sea-glass/90 transition-warm shadow-warm font-semibold"
       >
-        Book now
+        Reserve
       </button>
 
       <p className="mt-2 text-xs text-driftwood">
-        You&apos;ll be redirected to a secure payment page to complete your booking.
+        You won&apos;t be charged yet.
       </p>
     </aside>
   );
